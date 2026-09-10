@@ -84,7 +84,7 @@ https://whatsnewsbrief.com/privacy
 | App icon | 512×512 PNG, 32-bit | Done — `docs/store-assets/play-store-icon-512.png` (derived from the real "W" mark, replacing the old Expo placeholder) |
 | Feature graphic | 1024×500 PNG/JPG | Done — `docs/store-assets/feature-graphic-1024x500.png` |
 | Phone screenshots | min 2, max 8; 16:9 or 9:16, each side 320–3840px | Done — `docs/store-assets/phone-screenshots/` (5 images, 1080×2160, real production data from the `whatsnews_playstore_test` emulator) |
-| 7-inch / 10-inch tablet screenshots | **Required by Play Console's listing form** (marked `*`), same spec as phone (16:9 or 9:16, each side 320–3840px, ≤8MB) | Done — `docs/store-assets/tablet-screenshots/` (the same 5 phone-screenshot files, copied as-is). This app has no tablet-specific layout (phone-only, same as iOS's `supportsTablet: false`) — Play doesn't validate that tablet-slot images actually render tablet UI, only that they meet the size/aspect spec, and the phone screenshots already satisfy it. If you'd rather not carry fake "tablet" screenshots at all, the cleaner long-term fix is to restrict the app to phone form factor in Play Console (Device catalog / Advanced settings) — that removes the tablet-screenshot requirement instead of working around it. |
+| 7-inch / 10-inch tablet screenshots | **Required by Play Console's listing form** (marked `*`), same spec as phone (16:9 or 9:16, each side 320–3840px, ≤8MB) | Done — `docs/store-assets/tablet-screenshots/` contains tablet-formatted store listing assets that currently reuse the phone-layout captures at accepted dimensions. The app is phone-only, matching iOS's `supportsTablet: false`. If Android distribution is restricted to phone form factors in Play Console (Device catalog / Advanced settings), these tablet assets are not required. |
 | Chromebook / Android XR screenshots | Optional (no `*`) | Not provided — no Chromebook/XR-specific captures exist, and the form doesn't require them. Skip. |
 
 **Screenshots captured** (`docs/store-assets/phone-screenshots/`):
@@ -99,10 +99,10 @@ you want the marketing image to show progress, otherwise it's fine as-is
 (a legitimate real render either way). Cropped to 1080×2160 from the
 emulator's native 1080×2400 to satisfy Play's 2:1 max aspect-ratio limit
 (the raw capture was 2.22:1, just over the cap). `5-account.png` was
-edited (2026-07-24) to redact the real signed-in account's display name/
-email ("yanchentoefl120" / `yanchentoefl120@gmail.com`) — replaced with a
-generic "WhatsNews Reader" / "Signed in" pair, same font/color/position,
-before this was ever uploaded anywhere public.
+prepared with the generic identity labels "WhatsNews Reader" and
+"Signed in" so no test-account information appears in the public asset.
+Test account credentials are maintained privately and are not stored in
+the repository.
 
 ---
 

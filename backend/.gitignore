@@ -10,3 +10,6 @@ __pycache__/
 
 # Generated narrative audio (dev local storage)
 media/audio/
+
+# Generated briefing exports
+whatsnews-briefing*.pdf
