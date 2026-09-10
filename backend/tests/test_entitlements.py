@@ -38,7 +38,7 @@ class ParseRevenueCatEventTests(unittest.TestCase):
             parse_revenuecat_event(_payload({"type": "INITIAL_PURCHASE"}))
 
     def test_initial_purchase_with_future_expiration_is_active(self) -> None:
-        future_ms = int((NOW + timedelta(days=30)).timestamp() * 1000)
+        future_ms = int((datetime.now(tz=UTC) + timedelta(days=30)).timestamp() * 1000)
         result = parse_revenuecat_event(_payload({
             "type": "INITIAL_PURCHASE",
             "app_user_id": VALID_USER_ID,
