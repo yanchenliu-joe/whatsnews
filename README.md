@@ -23,6 +23,16 @@
 </p>
 
 <p align="center">
+  <a href="https://reactnative.dev/"><img src="https://img.shields.io/badge/React_Native-20232A?style=flat&logo=react&logoColor=61DAFB" alt="React Native" /></a>
+  <a href="https://www.typescriptlang.org/"><img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat&logo=typescript&logoColor=white" alt="TypeScript" /></a>
+  <a href="https://fastapi.tiangolo.com/"><img src="https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white" alt="FastAPI" /></a>
+  <a href="https://www.python.org/"><img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white" alt="Python" /></a>
+  <a href="https://www.postgresql.org/"><img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat&logo=postgresql&logoColor=white" alt="PostgreSQL" /></a>
+  <a href="https://openai.com/"><img src="https://img.shields.io/badge/OpenAI-000000?style=flat&logo=openai&logoColor=white" alt="OpenAI" /></a>
+  <a href="https://www.docker.com/"><img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white" alt="Docker" /></a>
+</p>
+
+<p align="center">
   <img src="docs/store-assets/phone-screenshots/1-briefing.png" alt="WhatsNews personalized daily briefing" width="31%" />
   &nbsp;
   <img src="docs/store-assets/phone-screenshots/2-article-why-it-matters.png" alt="WhatsNews article summary and Why It Matters view" width="31%" />
@@ -39,43 +49,50 @@ Its FastAPI backend ingests and deduplicates a broad news corpus, assembles topi
 ## System Architecture
 
 ```mermaid
-flowchart LR
+flowchart TB
     subgraph WritePath["Scheduled Write Path"]
-        Sources["~200 RSS / Atom sources<br/>20 topics"]
-        Ingest["Concurrent ingestion<br/>bounded workers + retries"]
-        Normalize["Normalize + optional scrape<br/>SHA-256 + Jaccard dedupe"]
-        Candidates[("Candidate articles<br/>Supabase PostgreSQL")]
-        Assemble["Report assembly<br/>quality + relevance + source diversity"]
-        Editorial["Deterministic<br/>editorial profiling"]
-        WIM["Why It Matters<br/>rule draft + optional OpenAI refinement"]
-        Narrative["Perspective + Watch Next<br/>Morning Brief narrative"]
-        Reports[("Persisted reports<br/>Supabase PostgreSQL")]
+        direction LR
+        Sources["News Sources<br/>~200 RSS / Atom · 20 topics"]
+        Ingest["Concurrent Ingestion<br/>retry · isolation"]
+        Normalize["Normalize + Deduplicate<br/>SHA-256 · Jaccard"]
+        Assemble["Report Assembly<br/>quality · relevance · diversity"]
+        Editorial["Editorial Enrichment<br/>WIM · perspectives · optional OpenAI"]
+        Narrative["Narrative Products<br/>Watch Next · Morning Brief"]
+        Sources --> Ingest --> Normalize --> Assemble --> Editorial --> Narrative
+    end
+
+    subgraph Data["Data Platform · Supabase"]
+        direction LR
+        Postgres[("PostgreSQL<br/>reports · articles · users")]
+        Storage[("Storage<br/>generated media")]
+        Postgres ~~~ Storage
     end
 
     subgraph ReadPath["Read-Time Intelligence"]
-        Signals["Signal scoring"]
-        Events["Event clustering"]
-        Briefing["Structured briefing"]
-        Cognitive["Cognitive framing"]
-        Feed["Unified feed<br/>cognitive → briefing → signal → raw"]
+        direction LR
+        Signals["Signal Scoring<br/>impact · recency · reliability"]
+        Events["Event Clustering<br/>title similarity · 72h"]
+        Briefing["Structured Briefing<br/>ranked events"]
+        Cognitive["Cognitive Framing<br/>impact · risk · affected groups"]
+        Feed["Unified Feed<br/>cognitive → briefing → signal → raw"]
+        Signals --> Events --> Briefing --> Cognitive --> Feed
     end
 
     subgraph Delivery["Product Delivery"]
-        API["FastAPI"]
-        Push["Timezone-aware push"]
+        direction LR
+        API["FastAPI<br/>REST API"]
+        Push["Timezone-Aware Push"]
         Mobile["Expo / React Native<br/>Android + iOS codebase"]
-        Platform["Supabase Auth / Storage"]
+        API --> Mobile
+        Push --> Mobile
     end
 
-    Sources --> Ingest --> Normalize --> Candidates
-    Candidates --> Assemble --> Editorial --> WIM --> Narrative --> Reports
-    Reports --> Signals --> Events --> Briefing --> Cognitive --> Feed
-    Feed --> API --> Mobile
-    Reports --> Push --> Mobile
-    Mobile -. identity + media .-> Platform
+    Narrative -->|persist| Postgres
+    Postgres --> Signals
+    Feed --> API
 ```
 
-The scheduled path persists selected and enriched report content. The separate read path scores and clusters those selected articles, builds briefing layers, and degrades to simpler representations if a richer response is unavailable.
+WhatsNews separates scheduled content generation from read-time intelligence. The write path ingests, deduplicates, enriches, and persists editorial content; the read path scores and clusters selected articles, builds progressively richer briefing layers, and gracefully falls back when a higher-level representation is unavailable.
 
 ## Hybrid News Intelligence Pipeline
 
