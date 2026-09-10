@@ -1,0 +1,70 @@
+{
+  "cli": {
+    "version": ">= 16.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://whatsnews-backend.onrender.com",
+        "EXPO_PUBLIC_ENABLE_AUTH": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://uzgwlisfxuhcxdjxedpp.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_ivvB-qngE_-2I1YeDmyklQ_b_Xo-tXb",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "894875535883-tm9i4h4ihqluot8b0juj719l6eaf2ipn.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "894875535883-emglrokrvq1f0d9h3jhnos55g0d21vj8.apps.googleusercontent.com",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://1967576805bea1712f72baf2c596b37b@o4511700644397056.ingest.us.sentry.io/4511700801224704"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    },
+    "development-simulator": {
+      "extends": "development",
+      "ios": {
+        "simulator": true,
+        "resourceClass": "m-medium"
+      }
+    },
+    "preview": {
+      "distribution": "internal",
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://whatsnews-backend.onrender.com",
+        "EXPO_PUBLIC_ENABLE_AUTH": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://uzgwlisfxuhcxdjxedpp.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_ivvB-qngE_-2I1YeDmyklQ_b_Xo-tXb",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "894875535883-tm9i4h4ihqluot8b0juj719l6eaf2ipn.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "894875535883-emglrokrvq1f0d9h3jhnos55g0d21vj8.apps.googleusercontent.com",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://1967576805bea1712f72baf2c596b37b@o4511700644397056.ingest.us.sentry.io/4511700801224704"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_API_BASE_URL": "https://whatsnews-backend.onrender.com",
+        "EXPO_PUBLIC_ENABLE_AUTH": "true",
+        "EXPO_PUBLIC_SUPABASE_URL": "https://uzgwlisfxuhcxdjxedpp.supabase.co",
+        "EXPO_PUBLIC_SUPABASE_ANON_KEY": "sb_publishable_ivvB-qngE_-2I1YeDmyklQ_b_Xo-tXb",
+        "EXPO_PUBLIC_GOOGLE_WEB_CLIENT_ID": "894875535883-tm9i4h4ihqluot8b0juj719l6eaf2ipn.apps.googleusercontent.com",
+        "EXPO_PUBLIC_GOOGLE_IOS_CLIENT_ID": "894875535883-emglrokrvq1f0d9h3jhnos55g0d21vj8.apps.googleusercontent.com",
+        "EXPO_PUBLIC_SENTRY_DSN": "https://1967576805bea1712f72baf2c596b37b@o4511700644397056.ingest.us.sentry.io/4511700801224704"
+      },
+      "ios": {
+        "resourceClass": "m-medium"
+      }
+    }
+  },
+  "submit": {
+    "production": {
+      "android": {
+        "serviceAccountKeyPath": "./google-play-service-account.json",
+        "track": "internal",
+        "releaseStatus": "completed"
+      }
+    }
+  }
+}

@@ -1,0 +1,90 @@
+# Render Blueprint — see https://render.com/docs/blueprint-spec
+#
+# IMPORTANT: this service runs an in-process asyncio scheduler
+# (ENABLE_SCHEDULER=true) that triggers the daily pipeline and sends push
+# notifications. Do NOT scale this service beyond 1 instance — multiple
+# instances would each run their own scheduler loop, causing duplicate
+# pipeline runs and duplicate push notifications to every device. See
+# docs/ENGINEERING.md's Deployment section.
+#
+# Secrets marked `sync: false` below are NOT stored in this file — Render
+# prompts for them once when you create the Blueprint, then keeps them in
+# its own encrypted env var store.
+
+services:
+  - type: web
+    name: whatsnews-backend
+    runtime: docker
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    # Starter (512MB) is NOT enough — confirmed 2026-07-07/08 via repeated
+    # live OOM crashes ("Ran out of memory (used over 512MB)") during a full
+    # 20-topic pipeline run with ENABLE_ARTICLE_SCRAPING=true, even after
+    # streaming/capping the two worst offenders (scrape.py, og_image.py).
+    # Standard resolved it immediately with no further code changes.
+    plan: standard
+    region: oregon
+    numInstances: 1
+    envVars:
+      # Use the Transaction pooler (port 6543), NOT Session pooler (5432) —
+      # the app opens a fresh short-lived psycopg2 connection per DB call
+      # with no app-level pooling, and this project's Session pooler is
+      # capped at pool_size:1, which a real concurrent 20-topic pipeline
+      # run exhausts immediately ("max clients reached in session mode").
+      # Get this from Supabase → Connect → Transaction pooler → URI.
+      - key: DATABASE_URL
+        sync: false
+      - key: ADMIN_API_KEY
+        sync: false
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_JWT_SECRET
+        sync: false
+      - key: SUPABASE_SERVICE_ROLE_KEY
+        sync: false
+      - key: ENABLE_AUTH
+        value: "true"
+      - key: ENABLE_SCHEDULER
+        value: "true"
+      - key: SCHEDULER_DAILY_TIME
+        value: "07:00,12:00,18:00"
+      - key: SCHEDULER_TIMEZONE
+        value: "America/Los_Angeles"
+      # Voice narration is now generated on-device (expo-speech) from the
+      # already-free rule-based narrative script_text, not server-side TTS —
+      # see docs/ENGINEERING.md's AI Pipeline section.
+      - key: ENABLE_VOICE_AUDIO_GENERATION
+        value: "false"
+      - key: VOICE_AUDIO_STORAGE
+        value: "supabase"
+      # Re-enabled 2026-07-13 — scraped body_text is never shown as full
+      # text in the app (still dropped from Read mode, 2026-07-11); it's
+      # now used purely as internal raw material so short/thin RSS
+      # summaries can be lengthened via improve_summary_from_body(), since
+      # summary is the only article content mobile actually displays.
+      # See docs/ENGINEERING.md's Operational Notes.
+      - key: ENABLE_ARTICLE_SCRAPING
+        value: "true"
+      - key: ENABLE_EDITORIAL_ENGINE
+        value: "true"
+      # Archive retention (2026-07-11) — deletes daily-report-scoped data
+      # (articles/narratives/perspectives/watch-next/generation_runs/
+      # narrative audio) older than 7 days, so Supabase storage stays
+      # bounded instead of growing forever. Runs automatically once a day;
+      # see docs/ENGINEERING.md's Operational Notes and app/retention/service.py.
+      # Irreversible, and saved_articles are never touched.
+      - key: ARCHIVE_RETENTION_DAYS
+        value: "7"
+      # No known browser-based web client exists for this product (mobile
+      # app + direct API calls are both unaffected by CORS) — narrowed to
+      # deny all cross-origin browser access by default. Add real origins
+      # here (comma-separated) if a web client is ever built.
+      - key: CORS_ALLOWED_ORIGINS
+        value: ""
+      # Sentry crash/error monitoring (2026-07-09). Optional — sentry_sdk.init()
+      # is skipped entirely if unset. Get the DSN from Sentry → whatsnews-backend
+      # project → Settings → Client Keys (DSN).
+      - key: SENTRY_DSN
+        sync: false
+      - key: SENTRY_ENVIRONMENT
+        value: "production"

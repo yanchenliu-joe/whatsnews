@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  backend-tests:
+    name: Backend tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          cache: "pip"
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      # No DATABASE_URL / ADMIN_API_KEY / OPENAI_API_KEY needed — every
+      # backend test mocks DB access and no test hits a real external
+      # service (confirmed in every tests/test_*.py file's own docstring).
+      - name: Run backend test suite
+        run: python3 -m unittest discover -s tests
+
+  mobile-tests:
+    name: Mobile type-check + tests
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: mobile
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: mobile/package-lock.json
+
+      # This project's own devDependency graph needs --legacy-peer-deps
+      # (documented in docs/ENGINEERING.md —
+      # e.g. zeego's exact peer-version pins), same flag used for every
+      # local `npm install` in this repo.
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Type-check
+        run: npx tsc --noEmit -p .
+
+      - name: Run mobile test suite
+        run: npx jest

@@ -1,0 +1,21 @@
+# Environment variables — never commit secrets
+.env
+.env.local
+*.env
+
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Generated narrative audio (local dev storage only)
+backend/media/audio/
+
+# Node / Expo (mobile has its own more detailed .gitignore too)
+node_modules/
+
+# Local development tool state
+.claude/
+
+# macOS
+.DS_Store
