@@ -14,10 +14,11 @@
 
 <p align="center">
   <a href="https://play.google.com/store/apps/details?id=com.whatsnews.app">
-    <img src="https://img.shields.io/badge/Google_Play-Download-414141?style=for-the-badge&logo=googleplay&logoColor=white" alt="Download WhatsNews on Google Play" />
+    <img src="docs/store-assets/readme/google-play-download.png" alt="Download WhatsNews on Google Play" height="58" />
   </a>
+  &nbsp;&nbsp;
   <a href="https://github.com/yanchenliu-joe/whatsnews/actions/workflows/ci.yml">
-    <img src="https://github.com/yanchenliu-joe/whatsnews/actions/workflows/ci.yml/badge.svg" alt="CI status" />
+    <img src="docs/store-assets/readme/ci-passing.png" alt="CI passing" height="58" />
   </a>
 </p>
 
